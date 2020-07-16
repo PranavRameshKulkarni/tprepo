@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_complete/models/LocationModel.dart';
+import 'package:flutter_complete/screens/Fetch.dart';
 import 'package:flutter_complete/screens/signup_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -32,11 +34,11 @@ class _StatefulState extends State<yourApp> {
   Position currentLocation;
   GoogleMapController googleMapController;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
+  List<LocationModel> lst;
   @override
   void initState() {
     super.initState();
-    addMarker();
+//    addMarker();
     BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5),
             'assets/images/1_qvmBfugDqSF1lmv5fD62aQ.png')
         .then((onValue) {
@@ -125,7 +127,7 @@ class _StatefulState extends State<yourApp> {
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 4),
           child: FloatingActionButton(
             elevation: 25.0,
-            onPressed: getCurrentLocation,
+            onPressed: getDataFromUrl,
             child: Icon(
               Icons.gps_fixed,
             ),
@@ -184,13 +186,10 @@ class _StatefulState extends State<yourApp> {
         Placemark newPlace = myList.first;
         currentLocation = newPlace.position;
 
-        markers.add(Marker(
-          markerId: MarkerId('City'),
-          position: LatLng(currentLocation.latitude, currentLocation.longitude),
-        ));
+        addMarker();
 //        markers[markerId] = marker;
 
-        _center = LatLng(currentLocation.latitude, currentLocation.longitude);
+        _center = LatLng(22.308985, 114.170992);
         googleMapController
             .animateCamera(CameraUpdate.newLatLngZoom(_center, 15));
       });
@@ -203,8 +202,10 @@ class _StatefulState extends State<yourApp> {
     print("Inside add marker method");
     setState(() {
       markers.add((Marker(
-          markerId: MarkerId('City'), position: LatLng(28.7041, 77.1025))));
+          markerId: MarkerId('City'),
+          position: LatLng(22.308985, 114.170992))));
     });
+    print('markers $markers');
   }
 
   void choiceAction(String value) {
@@ -225,5 +226,22 @@ class _StatefulState extends State<yourApp> {
         getCity('Satara');
         break;
     }
+  }
+
+  void getDataFromUrl() async {
+    Fetch fetch = new Fetch();
+    lst = await fetch.fetchLocation();
+    print(lst[0].address);
+    setState(() {
+      for (int i = 0; i < lst.length; i++) {
+        markers.add(
+          Marker(
+            markerId: MarkerId('pos$i'),
+            position: LatLng(lst[i].lat, lst[i].long),
+            infoWindow: InfoWindow(title: 'location $i'),
+          ),
+        );
+      }
+    });
   }
 }
