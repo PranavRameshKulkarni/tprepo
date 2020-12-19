@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'Homescreen.dart';
 
 class LoginScreen extends StatelessWidget {
   static const routeName = '/login';
+  HomeScreen homeScreen = new HomeScreen();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,11 +91,24 @@ class LoginScreen extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(15),
               textColor: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                saveToken();
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  saveToken() async {
+    SharedPreferences sps = await SharedPreferences.getInstance();
+    var url = 'https://hackelite.herokuapp.com/login/';
+    var credentials = {'username': 'admin', 'password': 'admin'};
+    var response = await http.post(url, body: credentials).then((value) {
+      var dic = json.decode(value.body);
+      print(dic['token']);
+      sps.setString('token', dic['token']);
+    });
   }
 }

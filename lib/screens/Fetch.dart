@@ -3,17 +3,17 @@ import 'package:flutter_complete/models/LocationModel.dart';
 import 'package:http/http.dart' as http;
 
 class Fetch {
-  final String url = "http://127.0.0.1:8000/";
+  final String url = "https://hackelite.herokuapp.com/places/";
 
-  Future<List<LocationModel>> fetchLocation() async {
-//    var params = {
-//      "doctor_id": "DOC000506",
-//      "date_range": "25/03/2019-25/03/2019",
-//      "clinic_id": "LAD000404"
-//    };
+  Future<List<LocationModel>> fetchLocation(lat, lng, query) async {
+    var params = {
+      "lat": lat.toString(),
+      "lng": lng.toString(),
+      "query": query,
+    };
 
     Uri uri = Uri.parse(url);
-//  uri = uri.replace(queryParameters: params);
+    uri = uri.replace(queryParameters: params);
     final response = await http.get(uri, headers: {
       'Token': 'new token',
     });

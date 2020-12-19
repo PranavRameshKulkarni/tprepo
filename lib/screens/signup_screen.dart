@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Homescreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupScreen extends StatelessWidget {
   static const routeName = '/signup';
@@ -136,6 +137,7 @@ class SignupScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(15),
                       textColor: Colors.white,
                       onPressed: () {
+                        displayToken();
                         Navigator.pushNamed(context, HomeScreen.routeName);
                       },
                     ),
@@ -147,5 +149,11 @@ class SignupScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void displayToken() async {
+    SharedPreferences sfs = await SharedPreferences.getInstance();
+    var token = sfs.getString('token');
+    print('token is here $token');
   }
 }
